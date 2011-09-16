@@ -1,4 +1,4 @@
-= Ops: trying to make vector math look a little better in JS =
+# Ops: trying to make vector math look a little better in JS
 
 JavaScript does not have operator overloading (not necessary a bad thing...), so to perform vector calculations, you have two options:
 
@@ -27,32 +27,37 @@ As an experiment, I created Ops: an attempt at making vector math read more intu
 
 Ops is meant to be used alongside a more powerful library, like [glMatrix](code.google.com/p/glmatrix/). It is not a replacement, nor is it meant to be. It's named Ops and not vop because maybe in the future it will handle more than just vector math.
 
-== Pros ==
+## Pros 
 
   * Hopefully easier to read
   * Still a strong indication that these are not ordinary numbers, unlike when using operator overloads
   * No custom objects. Still completely interoperable with glMatrix (and others that use arrays)
   * Can alias the `vop` method to `v` for even shorter reference
 
-== Cons ==
+## Cons 
 
   * Sometimes slightly slower than glMatrix (most of the time faster or same: see test/speed.js)
   * Strings, Captain! STRINGS!
 
-= API = 
+# API 
 
 All vops take the form: `vector1, op, vector2`, where `op` can be one of the following:
 
 `+` : adds the two vectors, returns the new vector
+
 `-` : subtracts the two vectors, returns the new vector
+
 `+=` : adds `vector2` into `vector1`, and returns `vector1`
+
 `-=` : subtracts `vector2` from `vector1`, and returns `vector1`
+
 `*` : returns the scalar dot product of the two vectors
+
 `x` : returns a new vector containing the cross product
 
-= Examples =
+# Examples
 
-=== Particle Projection ===
+### Particle Projection
 
 Using only glMatrix, computing the projection of a particle is slightly confusing. The values resulting from the below line are actually being assigned to `this.tpos` (in place).
 
@@ -66,7 +71,7 @@ Granted, glMatrix allows you to do something similar, but you are left with the 
 
 	this.tpos = vec3.add( this.pos, vec3.scale(this.vel, this.damping * dt), [] );
 
-=== Adding Force ===
+### Adding Force
 
 	// glmatrix
 	vec3.add(this.vel, vec3.scale(f, this.invMass));
@@ -74,7 +79,7 @@ Granted, glMatrix allows you to do something similar, but you are left with the 
 	// vop
 	vop(this.vel, '+=', vec3.scale(f, this.invMass))
 
-= Speed =
+# Speed
 
 Run `node test/speed.js`. Requires [benchmark](http://benchmarkjs.com/). Current output:
 
@@ -102,6 +107,6 @@ Run `node test/speed.js`. Requires [benchmark](http://benchmarkjs.com/). Current
 
 The grouping is deceptive, but Ops is often faster. What you should really read out of this is that Ops is "fast enough, seriously."
 
-= Conclusion =
+# Conclusion
 
 This is an experiment, and one that I'm not in love with! But you have to try things to see what works, right?
