@@ -7,45 +7,56 @@ var  Benchmark = require('benchmark')
 			existsA = [1,1,1]
 			existsB = [1,1,1]				
 		}
-		,onCycle: function(){
+		,onCycle: function(event, bench){
+			console.log(String(bench));
 			existsA = [1,1,1]
 			existsB = [1,1,1]			
 		}
+		,onComplete: function() {
+			console.log('--> Fastest is ' + this.filter('fastest').pluck('name'));
+		}
 	}
 
-	,add = new Benchmark.Suite('glmatrix vs ops: add', suiteOptions)
-	,sub = new Benchmark.Suite('glmatrix vs ops: sub', suiteOptions)
+	,addNew = new Benchmark.Suite('glmatrix vs ops: add new into new', suiteOptions)
+	,addExist = new Benchmark.Suite('glmatrix vs ops: add existing into new', suiteOptions)
+	,addEq = new Benchmark.Suite('glmatrix vs ops: add existing plusEqual', suiteOptions)
+
+	,sub = new Benchmark.Suite('glmatrix vs ops: sub existing into new', suiteOptions)
+	,subEq = new Benchmark.Suite('glmatrix vs ops: sub existing minusEqual', suiteOptions)
+	
 	,dot = new Benchmark.Suite('glmatrix vs ops: dot', suiteOptions)
 	,cross = new Benchmark.Suite('glmatrix vs ops: cross', suiteOptions)
+
+	,set = new Benchmark.Suite('glmatrix vs ops: set', suiteOptions)
 
 	,existsA
 	,existsB;
 
 // +
 
-add.add('vec3#add new arrays into new', function(){
+addNew.add('vec3#add new arrays into new', function(){
 	var a = glmatrix.vec3.add([1,1,1], [1,1,1], []);
 })
 
-add.add('vop#add new arrays into new', function(){
+addNew.add('vop#add new arrays into new', function(){
 	var a = ops.vop([1,1,1], '+', [1,1,1]);
 })
 
 
-add.add('vec3#add existing arrays into new', function(){
+addExist.add('vec3#add existing arrays into new', function(){
 	var a = glmatrix.vec3.add(existsA, existsB, []);
 })
 
-add.add('vop#add existing arrays into new', function(){
+addExist.add('vop#add existing arrays into new', function(){
 	var a = ops.vop(existsA, '+', existsB);
 })
 
 
-add.add('vec3#add existing plusEqual', function(){
+addEq.add('vec3#add existing plusEqual', function(){
 	var a = glmatrix.vec3.add(existsA, existsB);
 })
 
-add.add('vop#add existing plusEqual', function(){
+addEq.add('vop#add existing plusEqual', function(){
 	var a = ops.vop(existsA, '+=', existsB);
 })
 
@@ -60,11 +71,11 @@ sub.add('vop#subtract existing arrays into new', function(){
 })
 
 
-sub.add('vec3#subtract existing minusEqual', function(){
+subEq.add('vec3#subtract existing minusEqual', function(){
 	var a = glmatrix.vec3.subtract(existsA, existsB);
 })
 
-sub.add('vop#subtract existing minusEqual', function(){
+subEq.add('vop#subtract existing minusEqual', function(){
 	var a = ops.vop(existsA, '+=', existsB);
 })
 
@@ -88,29 +99,26 @@ cross.add('vop#cross', function(){
 	var a = ops.vop(existsA, 'x', existsB);
 })
 
+// = / set
+
+set.add('vec3#set', function(){
+	var a = glmatrix.vec3.set(existsA, existsB);
+})
+
+set.add('vop#set', function(){
+	var a = ops.vop(existsB, '=', existsA);	
+})
 
 
-function onCycle(event, bench){
-	console.log(String(bench));
-}
 
-function onComplete() {
-	console.log('--> Fastest is ' + this.filter('fastest').pluck('name'));
-}
+addNew.run();
+addExist.run();
+addEq.run();
 
-
-add.on('cycle', onCycle);
-sub.on('cycle', onCycle);
-dot.on('cycle', onCycle);
-cross.on('cycle', onCycle);
-
-add.on('complete', onComplete);
-sub.on('complete', onComplete);
-dot.on('complete', onComplete);
-cross.on('complete', onComplete);
-
-add.run();
 sub.run();
+subEq.run();
+
 dot.run();
 cross.run();
+set.run();
 

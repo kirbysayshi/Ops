@@ -55,6 +55,8 @@ All vops take the form: `vector1, op, vector2`, where `op` can be one of the fol
 
 `x` : returns a new vector containing the cross product
 
+`=` : sets `vector1` values equal to the values from `vector2` 
+
 # Examples
 
 ### Particle Projection
