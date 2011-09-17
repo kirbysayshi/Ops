@@ -81,33 +81,55 @@ Granted, glMatrix allows you to do something similar, but you are left with the 
 	// vop
 	vop(this.vel, '+=', vec3.scale(f, this.invMass))
 
+### Particle Position Update
+
+	// glmatrix
+	vec3.subtract(this.tpos, this.pos, this.vel);
+	vec3.scale(this.vel, idt);
+	vec3.set(this.tpos, this.pos);
+
+	// vop
+	this.vel = vop(this.tpos, '-', this.pos);
+	vec3.scale(this.vel, idt);
+	vop(this.pos, '=', this.tpos);
+
 # Speed
 
 Run `node test/speed.js`. Requires [benchmark](http://benchmarkjs.com/). Current output:
 
-	vec3#add new arrays into new x 4,203,323 ops/sec ±2.52% (90 runs sampled)
-	vop#add new arrays into new x 10,820,042 ops/sec ±1.53% (91 runs sampled)
-	vec3#add existing arrays into new x 5,166,261 ops/sec ±2.54% (87 runs sampled)
-	vop#add existing arrays into new x 11,797,793 ops/sec ±1.18% (91 runs sampled)
-	vec3#add existing plusEqual x 15,142,537 ops/sec ±1.15% (92 runs sampled)
-	vop#add existing plusEqual x 13,905,744 ops/sec ±1.45% (88 runs sampled)
-	--> Fastest is vec3#add existing plusEqual
+	vec3#add new arrays into new x 3,563,902 ops/sec ±2.55% (80 runs sampled)
+	vop#add new arrays into new x 9,406,491 ops/sec ±1.23% (88 runs sampled)
+	--> Fastest is vop#add new arrays into new
 
-	vec3#subtract existing arrays into new x 5,283,542 ops/sec ±2.08% (91 runs sampled)
-	vop#subtract existing arrays into new x 12,016,066 ops/sec ±1.46% (92 runs sampled)
-	vec3#subtract existing minusEqual x 15,360,859 ops/sec ±1.36% (90 runs sampled)
-	vop#subtract existing minusEqual x 14,437,870 ops/sec ±1.71% (93 runs sampled)
+	vec3#add existing arrays into new x 4,489,732 ops/sec ±2.45% (82 runs sampled)
+	vop#add existing arrays into new x 10,202,485 ops/sec ±2.12% (81 runs sampled)
+	--> Fastest is vop#add existing arrays into new
+
+	vec3#add existing plusEqual x 13,439,596 ops/sec ±1.73% (86 runs sampled)
+	vop#add existing plusEqual x 13,033,592 ops/sec ±1.63% (91 runs sampled)
+	--> Fastest is vec3#add existing plusEqual,vop#add existing plusEqual
+
+	vec3#subtract existing arrays into new x 4,662,350 ops/sec ±1.90% (84 runs sampled)
+	vop#subtract existing arrays into new x 11,738,893 ops/sec ±1.52% (90 runs sampled)
+	--> Fastest is vop#subtract existing arrays into new
+
+	vec3#subtract existing minusEqual x 13,860,887 ops/sec ±1.58% (88 runs sampled)
+	vop#subtract existing minusEqual x 12,581,855 ops/sec ±1.67% (89 runs sampled)
 	--> Fastest is vec3#subtract existing minusEqual
 
-	vec3#dot x 20,988,440 ops/sec ±1.29% (93 runs sampled)
-	vop#dot x 15,938,175 ops/sec ±1.87% (88 runs sampled)
+	vec3#dot x 19,004,653 ops/sec ±1.60% (77 runs sampled)
+	vop#dot x 14,499,943 ops/sec ±1.48% (89 runs sampled)
 	--> Fastest is vec3#dot
 
-	vec3#cross x 4,935,437 ops/sec ±2.50% (87 runs sampled)
-	vop#cross x 9,764,686 ops/sec ±1.71% (88 runs sampled)
+	vec3#cross x 4,354,946 ops/sec ±2.08% (80 runs sampled)
+	vop#cross x 9,147,004 ops/sec ±1.33% (89 runs sampled)
 	--> Fastest is vop#cross
 
-The grouping is deceptive, but Ops is often faster. What you should really read out of this is that Ops is "fast enough, seriously."
+	vec3#set x 21,830,091 ops/sec ±1.52% (85 runs sampled)
+	vop#set x 15,670,835 ops/sec ±1.45% (87 runs sampled)
+	--> Fastest is vec3#set
+
+Ops is often faster. When it's slower, it's because of the one extra function call from delgating. What you should really read out of this is that Ops is "fast enough, seriously."
 
 # Conclusion
 
